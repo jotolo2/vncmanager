@@ -160,6 +160,11 @@ void GreeterConnection::showError(std::string error)
     m_out.flush();
 }
 
+void GreeterConnection::setCancelAuthHandler(GreeterConnection::CancelAuthHandler cancelAuthHandler)
+{
+    m_cancelAuthHandler = cancelAuthHandler;
+}
+
 void GreeterConnection::sendSessions()
 {
     auto sessions = m_greeterManager.sessionList();
@@ -209,6 +214,11 @@ void GreeterConnection::receive()
         std::string password;
         m_in >> password;
         m_credentialsHandler(username, password);
+        return;
+    }
+
+    if (cmd == "CANCEL") {
+        m_cancelAuthHandler();
         return;
     }
 }

@@ -91,7 +91,7 @@ void VncTunnel::start()
 
                 select();
             } catch (XvncConnection::ConnectionException &e) {
-                if (m_greeterConnection) {
+                if (m_greeterConnection && e.showInGreeter()) {
                     m_greeterConnection->showError(e.what());
                 }
 
@@ -744,6 +744,9 @@ void VncTunnel::switchToConnection(std::shared_ptr<Xvnc> xvnc)
     m_selector.cancel();
 
     assert(m_greeterConnection);
+
+    m_greeterConnection->setCancelAuthHandler(std::bind(&XvncConnection::handleCancelAuthentication, m_potentialConnection));
+
     m_potentialConnection->initialize(
         std::bind(&VncTunnel::connectionSwitched, this),
         std::bind(&GreeterConnection::askForPassword, m_greeterConnection, std::placeholders::_1),

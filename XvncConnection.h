@@ -59,14 +59,17 @@ public:
     class ConnectionException : public std::runtime_error
     {
     public:
-        ConnectionException(const XvncConnection *faultyConnection, std::string message)
-            : std::runtime_error(message), m_faultyConnection(faultyConnection)
+        ConnectionException(const XvncConnection *faultyConnection, std::string message, bool showGreeter = true)
+            : std::runtime_error(message), m_faultyConnection(faultyConnection), m_showGreeter(showGreeter)
         {}
 
         const XvncConnection *faultyConnection() const { return m_faultyConnection; }
 
+        const bool showInGreeter() const { return m_showGreeter; }
+
     private:
         const XvncConnection *m_faultyConnection;
+        bool m_showGreeter;
     };
 
 public:
@@ -105,6 +108,11 @@ public:
      * Stream format on top of the stream used to communicate with the VNC server.
      */
     StreamFormatter &fmt() { return m_streamFormatter; }
+
+    /**
+     * Cancel authentication process if greeter asks.
+     */
+    void handleCancelAuthentication();
 
     uint16_t framebufferWidth() const { return m_framebufferWidth; }
     uint16_t framebufferHeight() const { return m_framebufferHeight; }

@@ -187,6 +187,11 @@ void XvncConnection::handleVncAuthSecurityWithPassword(std::string password)
     completeInitialization();
 }
 
+void XvncConnection::handleCancelAuthentication()
+{
+    throw ConnectionException(this, "Cancelled authentication", false);
+}
+
 void XvncConnection::handleVeNCryptSecurity()
 {
     // Receive server's VeNCrypt version
