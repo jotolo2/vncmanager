@@ -152,7 +152,7 @@ FdStream Xvnc::connect()
 
     m_connectionCount++;
 
-    return FdStream(fd);
+    return FdStream(fd, Stream::Side::ServerSide, id());
 }
 
 void Xvnc::disconnect()

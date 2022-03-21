@@ -59,7 +59,7 @@ public:
      * @param fd Opened file descriptor that can be read from and written to.
      * @param anonymous True for anonymous TLS, false for TLS with certificate.
      */
-    TLSStream(int fd, bool anonymous);
+    TLSStream(int fd, bool anonymous, Side side, int id);
 
     TLSStream(TLSStream &) = delete;
     FdStream &operator=(FdStream &) = delete;

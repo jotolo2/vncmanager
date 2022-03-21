@@ -50,7 +50,7 @@ public:
      *
      * @param fd Opened file descriptor that can be read from and written to.
      */
-    FdStream(int fd);
+    FdStream(int fd, Side side, int id);
 
     FdStream(FdStream &) = delete;
 

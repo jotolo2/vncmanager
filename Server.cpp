@@ -58,6 +58,8 @@ Server::Server()
 
     std::string port = Configuration::options["port"].as<std::string>();
     listen(addresses, port);
+
+    Log::makeLogDir();
 }
 
 Server::~Server()

@@ -36,12 +36,14 @@
 #include "Configuration.h"
 #include "Log.h"
 
+int VncTunnel::m_clientCounter = 0;
 
 VncTunnel::VncTunnel(XvncManager &xvncManager, GreeterManager &greeterManager, ControllerManager &controllerManager, int fd)
     : m_xvncManager(xvncManager)
     , m_greeterManager(greeterManager)
     , m_controllerManager(controllerManager)
-    , m_stream(new FdStream(fd))
+    , m_clientId(m_clientCounter++)
+    , m_stream(new FdStream(fd, Stream::Side::ClientSide, m_clientId))
     , m_streamFormatter(m_stream)
 {
 }
@@ -221,7 +223,11 @@ void VncTunnel::handleVeNCryptSecurity()
     case VeNCryptSubtype::X509None: {
         // Convert the client stream into TLSStream
         bool anonymousTLS = (selectedSubtype == VeNCryptSubtype::TLSNone);
-        TLSStream *newTLSStream = new TLSStream(m_stream->takeFd(), anonymousTLS);
+        TLSStream *newTLSStream = new TLSStream(m_stream->takeFd(),
+                                                anonymousTLS,
+                                                Stream::Side::ClientSide,
+                                                m_clientId);
+
         delete m_stream;
         m_stream = newTLSStream;
         m_streamFormatter = StreamFormatter(m_stream);
@@ -692,7 +698,7 @@ void VncTunnel::sendDummyRectangle()
         rectangle.height = 1;
         uint32_t black = 0;
         cFmt().send(rectangle);
-        cFmt().send_raw(&black, m_pixelFormat.bitsPerPixel / 8);
+        cFmt().send_raw(&black, m_pixelFormat.bitsPerPixel / 8, typeid(black));
     } else if (clientSupportsEncoding(EncodingType::CopyRect)) {
         // Going to break left top pixel...
         FramebufferUpdateRectangle rectangle;

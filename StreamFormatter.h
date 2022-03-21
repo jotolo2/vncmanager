@@ -33,8 +33,12 @@
 
 #include <arpa/inet.h>
 
-#include "Stream.h"
+#include <iomanip>
 
+#include <unordered_set>
+
+#include "Stream.h"
+#include "Log.h"
 
 /**
  * @brief a class that takes care of reading/writing structures to/from Stream.
@@ -109,6 +113,11 @@ private:
         t = ntohl(t);
     }
 
+    void log_stream(const uint8_t *buf,
+                    std::size_t len,
+                    const std::type_info &type,
+                    const char dir);
+
 public:
     StreamFormatter(Stream *stream);
 
@@ -120,7 +129,9 @@ public:
     /**
      * Send raw data to the stream as they are.
      */
-    void send_raw(const void *buf, std::size_t len);
+    void send_raw(const void *buf,
+                  std::size_t len,
+                  const std::type_info &type);
 
     /**
      * Send referenced variable to the stream as-is.
@@ -128,7 +139,7 @@ public:
      */
     template<typename T>
     void send_raw(const T &t) {
-        send_raw(&t, sizeof(T));
+        send_raw(&t, sizeof(T), typeid(T));
     }
 
     /**
@@ -137,7 +148,7 @@ public:
      */
     template<typename T, std::size_t length>
     void send_raw(const T(& array) [length]) {
-        send_raw(array, length * sizeof(T));
+        send_raw(array, length * sizeof(T), typeid(T));
     }
 
     /**
@@ -146,7 +157,7 @@ public:
      */
     template<typename T, typename A>
     void send_raw(std::vector<T, A> const &vector) {
-        send_raw(vector.data(), vector.size() * sizeof(T));
+        send_raw(vector.data(), vector.size() * sizeof(T), typeid(T));
     }
 
     /**
@@ -154,7 +165,7 @@ public:
      * Writes text.length() bytes.
      */
     void send(const std::string &text) {
-        send_raw(text.data(), text.length());
+        send_raw(text.data(), text.length(), typeid(char[]));
     }
 
     /**
@@ -183,7 +194,9 @@ public:
     /**
      * Receives given amount of data without converting.
      */
-    void recv_raw(void *buf, std::size_t len);
+    void recv_raw(void *buf,
+                  std::size_t len,
+                  const std::type_info &type);
 
     /**
      * Receives into referenced variable without converting.
@@ -191,7 +204,7 @@ public:
      */
     template<typename T>
     void recv_raw(T &t) {
-        recv_raw(&t, sizeof(T));
+        recv_raw(&t, sizeof(T), typeid(T));
     }
 
     /**
@@ -200,7 +213,7 @@ public:
      */
     template<typename T, std::size_t length>
     void recv_raw(T(& array) [length]) {
-        recv_raw(array, length * sizeof(T));
+        recv_raw(array, length * sizeof(T), typeid(T));
     }
 
     /**
@@ -209,7 +222,7 @@ public:
      */
     template<typename T, typename A>
     void recv_raw(std::vector<T, A> &vector) {
-        recv_raw(vector.data(), vector.size() * sizeof(T));
+        recv_raw(vector.data(), vector.size() * sizeof(T), typeid(T));
     }
 
     /**

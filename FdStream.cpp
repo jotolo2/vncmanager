@@ -37,8 +37,9 @@ FdStream::FdStream()
     : m_fd(-1)
 {}
 
-FdStream::FdStream(int fd)
-    : m_fd(fd)
+FdStream::FdStream(int fd, Side side, int id)
+    : Stream(side, id)
+    , m_fd(fd)
 {}
 
 FdStream::FdStream(FdStream && another)
@@ -47,6 +48,8 @@ FdStream::FdStream(FdStream && another)
         close(m_fd);
     }
 
+    m_side = another.m_side;
+    m_clientServerId = another.m_clientServerId;
     m_fd = another.m_fd;
     another.m_fd = -1;
 }

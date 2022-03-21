@@ -29,6 +29,18 @@
 
 #include <iostream>
 
+#include <fstream>
+
+#include <string.h>
+
+#include <iomanip>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include "helper.h"
+
+
 /**
  * @brief simple logging class.
  *
@@ -44,6 +56,13 @@ public:
     static std::ostream &notice();
     static std::ostream &warning();
     static std::ostream &error();
+    static std::ofstream &packets();
+    static std::ofstream &types();
+    static void makeLogDir();
+
+private:
+    static std::ofstream packetsStream;
+    static std::ofstream typesStream;
 };
 
 #endif // LOG_H

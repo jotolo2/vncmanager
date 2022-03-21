@@ -26,6 +26,10 @@
 
 #include "Stream.h"
 
+Stream::Stream(Side side, int id)
+    : m_side(side)
+    , m_clientServerId(id)
+{}
 
 void Stream::forward_directly(Stream &output, std::size_t len)
 {

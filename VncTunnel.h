@@ -138,6 +138,9 @@ private:
     GreeterManager &m_greeterManager;
     ControllerManager &m_controllerManager;
 
+    static int m_clientCounter;
+    int m_clientId;
+
     Stream *m_stream;
     StreamFormatter m_streamFormatter;
 

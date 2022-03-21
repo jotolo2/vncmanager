@@ -45,6 +45,24 @@
 class Stream
 {
 public:
+    enum Side
+    {
+        ClientSide = 'c',
+        ServerSide = 's'
+    };
+
+public:
+
+    Stream() {}
+
+    /**
+     * @brief Create Stream with some info of the connection.
+     *
+     * @param side Info if stream is communicating with client or server.
+     * @param id  Identifier of Xvnc server or client.
+     */
+    Stream(Side side, int id);
+
     virtual ~Stream() {}
 
     /**
@@ -88,6 +106,14 @@ public:
      * No more reading or writing is possible after calling this method.
      */
     virtual int takeFd() = 0;
+
+    const Side side() const { return m_side; }
+
+    const int clientServerId() const { return m_clientServerId; }
+
+protected:
+    Side m_side;
+    int m_clientServerId;
 };
 
 #endif // STREAM_H

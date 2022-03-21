@@ -96,13 +96,13 @@ SecurityType XvncConnection::startInitialization(std::set<SecurityType> supporte
 {
     // Read the server's version
     char versionString[VersionStringLength];
-    fmt().recv_raw(versionString, sizeof(versionString));
+    fmt().recv_raw(versionString, sizeof(versionString), typeid(char[]));
     if (strncmp(versionString, HighestVersionString, VersionStringLength) != 0) {
         throw ConnectionException(this, "Unsupported version of RFB protocol");
     }
 
     // Respond with the same version.
-    fmt().send_raw(versionString, sizeof(versionString));
+    fmt().send_raw(versionString, sizeof(versionString), typeid(char[]));
 
     // Negotiate security
     uint8_t numberOfSecurityTypes;

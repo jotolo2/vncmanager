@@ -26,6 +26,8 @@
 
 #include "Log.h"
 
+std::ofstream Log::packetsStream;
+std::ofstream Log::typesStream;
 
 std::ostream &Log::error()
 {
@@ -55,4 +57,42 @@ std::ostream &Log::debug()
 {
     std::cout << "<7>";
     return std::cout;
+}
+
+std::ofstream &Log::packets()
+{
+    return packetsStream;
+}
+
+std::ofstream &Log::types()
+{
+    return typesStream;
+}
+
+void Log::makeLogDir()
+{
+    std::string path = "/var/log/vncmanager";
+    std::string packetsFile = path + "/vncmanager_packets.log";
+    std::string typesFile = path + "/vncmanager_types.log";
+
+    if (mkdir(path.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
+        < 0 && errno != EEXIST)
+    {
+        throw_errno(path);
+    }
+
+    packetsStream = std::ofstream(packetsFile,
+                                  std::ofstream::out |
+                                  std::ofstream::trunc |
+                                  std::ofstream::binary);
+    packetsStream << std::unitbuf;
+
+    typesStream = std::ofstream(typesFile,
+                                std::ofstream::out |
+                                std::ofstream::trunc |
+                                std::ofstream::binary);
+    typesStream << std::unitbuf;
+
+    chmod(packetsFile.c_str(), DEFFILEMODE);
+    chmod(typesFile.c_str(), DEFFILEMODE);
 }

@@ -33,8 +33,10 @@
 #include "TLSStream.h"
 
 
-TLSStream::TLSStream(int fd, bool anonymous)
-    : m_fd(fd), m_anonymous(anonymous)
+TLSStream::TLSStream(int fd, bool anonymous, Side side, int id)
+    : Stream(side, id)
+    , m_fd(fd)
+    , m_anonymous(anonymous)
 {}
 
 TLSStream::~TLSStream()
